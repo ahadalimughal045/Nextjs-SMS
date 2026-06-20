@@ -1,0 +1,69 @@
+# ================================================
+# Root .gitignore — Laravel School System Project
+# ================================================
+
+# Laravel dependencies — NEVER commit these
+lav_sms/vendor/
+lav_sms/node_modules/
+
+# Environment & Secrets
+lav_sms/.env
+lav_sms/.env.backup
+lav_sms/.env.production
+
+# Storage (runtime generated)
+lav_sms/storage/logs/*
+lav_sms/storage/framework/cache/*
+lav_sms/storage/framework/sessions/*
+lav_sms/storage/framework/views/*
+lav_sms/storage/*.key
+lav_sms/public/hot
+lav_sms/public/storage
+
+# Keep storage folder structure
+!lav_sms/storage/logs/.gitkeep
+!lav_sms/storage/framework/cache/.gitkeep
+!lav_sms/storage/framework/sessions/.gitkeep
+!lav_sms/storage/framework/views/.gitkeep
+!lav_sms/storage/app/.gitkeep
+
+# Database
+lav_sms/database/database.sqlite
+lav_sms/database/*.sqlite
+
+# Bootstrap cache
+lav_sms/bootstrap/cache/*.php
+!lav_sms/bootstrap/cache/.gitkeep
+
+# PHP cache
+lav_sms/.phpunit.result.cache
+lav_sms/_ide_helper.php
+lav_sms/_ide_helper_models.php
+lav_sms/.phpstorm.meta.php
+
+# Build output
+lav_sms/public/css/app.css
+lav_sms/public/js/app.js
+lav_sms/mix-manifest.json
+lav_sms/public/build/
+
+# IDE & Editor
+.idea/
+.vscode/
+*.suo
+*.user
+.vs/
+.editorconfig
+Homestead.json
+Homestead.yaml
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*

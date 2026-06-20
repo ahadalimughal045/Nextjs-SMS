@@ -1,0 +1,387 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model blood_groups {
+  id         Int       @id @default(autoincrement())
+  name       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model book_requests {
+  id         Int       @id @default(autoincrement())
+  book_id    Int
+  user_id    Int
+  start_date String
+  end_date   String
+  returned   String    @default("0")
+  status     String?
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model books {
+  id            Int       @id @default(autoincrement())
+  name          String
+  my_class_id   Int?
+  description   String?
+  author        String?
+  book_type     String?
+  url           String?
+  location      String?
+  total_copies  Int?
+  issued_copies Int?
+  created_at    DateTime?
+  updated_at    DateTime?
+}
+
+model class_types {
+  id         Int       @id @default(autoincrement())
+  name       String
+  code       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model dorms {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "dorms_name_unique")
+  description String?
+  created_at  DateTime?
+  updated_at  DateTime?
+}
+
+model exam_records {
+  id          Int       @id @default(autoincrement())
+  exam_id     Int
+  student_id  Int
+  my_class_id Int
+  section_id  Int
+  total       Int?
+  ave         String?
+  class_ave   String?
+  pos         Int?
+  af          String?
+  ps          String?
+  p_comment   String?
+  t_comment   String?
+  year        String
+  created_at  DateTime?
+  updated_at  DateTime?
+}
+
+model exams {
+  id         Int       @id @default(autoincrement())
+  name       String
+  term       Int
+  year       String
+  created_at DateTime?
+  updated_at DateTime?
+
+  @@unique([term, year], map: "exams_term_year_unique")
+}
+
+model grades {
+  id            Int       @id @default(autoincrement())
+  name          String
+  class_type_id Int?
+  mark_from     Int
+  mark_to       Int
+  remark        String?
+  created_at    DateTime?
+  updated_at    DateTime?
+
+  @@unique([name, class_type_id, remark], map: "grades_name_class_type_id_remark_unique")
+}
+
+model lgas {
+  id         Int       @id @default(autoincrement())
+  state_id   Int
+  name       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model marks {
+  id          Int       @id @default(autoincrement())
+  student_id  Int
+  subject_id  Int
+  my_class_id Int
+  section_id  Int
+  exam_id     Int
+  t1          Int?
+  t2          Int?
+  t3          Int?
+  t4          Int?
+  tca         Int?
+  exm         Int?
+  tex1        Int?
+  tex2        Int?
+  tex3        Int?
+  sub_pos     Int?
+  cum         Int?
+  cum_ave     String?
+  grade_id    Int?
+  year        String
+  created_at  DateTime?
+  updated_at  DateTime?
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement())
+  migration String
+  batch     Int
+}
+
+model my_classes {
+  id            Int       @id @default(autoincrement())
+  name          String
+  class_type_id Int?
+  created_at    DateTime?
+  updated_at    DateTime?
+
+  @@unique([class_type_id, name], map: "my_classes_class_type_id_name_unique")
+}
+
+model nationalities {
+  id         Int       @id @default(autoincrement())
+  name       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model password_resets {
+  email      String
+  token      String
+  created_at DateTime?
+
+  @@index([email], map: "password_resets_email_index")
+  @@ignore
+}
+
+model payment_records {
+  id         Int       @id @default(autoincrement())
+  payment_id Int
+  student_id Int
+  ref_no     String?   @unique(map: "payment_records_ref_no_unique")
+  amt_paid   Int?
+  balance    Int?
+  paid       Int       @default(0)
+  year       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model payments {
+  id          Int       @id @default(autoincrement())
+  title       String
+  amount      Int
+  ref_no      String    @unique(map: "payments_ref_no_unique")
+  method      String    @default("cash")
+  my_class_id Int?
+  description String?
+  year        String
+  created_at  DateTime?
+  updated_at  DateTime?
+}
+
+model pins {
+  id         Int       @id @default(autoincrement())
+  code       String    @unique(map: "pins_code_unique")
+  used       String    @default("0")
+  times_used String    @default("0")
+  user_id    Int?
+  student_id Int?
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model promotions {
+  id           Int       @id @default(autoincrement())
+  student_id   Int
+  from_class   Int
+  from_section Int
+  to_class     Int
+  to_section   Int
+  grad         Int
+  from_session String
+  to_session   String
+  status       String
+  created_at   DateTime?
+  updated_at   DateTime?
+}
+
+model receipts {
+  id         Int       @id @default(autoincrement())
+  pr_id      Int
+  amt_paid   Int
+  balance    Int
+  year       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model sections {
+  id          Int       @id @default(autoincrement())
+  name        String
+  my_class_id Int
+  teacher_id  Int?
+  active      Int       @default(0)
+  created_at  DateTime?
+  updated_at  DateTime?
+
+  @@unique([name, my_class_id], map: "sections_name_my_class_id_unique")
+}
+
+model settings {
+  id          Int       @id @default(autoincrement())
+  type        String
+  description String?
+  created_at  DateTime?
+  updated_at  DateTime?
+}
+
+model skills {
+  id         Int       @id @default(autoincrement())
+  name       String
+  skill_type String
+  class_type String?
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model staff_records {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  code       String?   @unique(map: "staff_records_code_unique")
+  emp_date   String?
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model states {
+  id         Int       @id @default(autoincrement())
+  name       String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model student_records {
+  id            Int       @id @default(autoincrement())
+  user_id       Int
+  my_class_id   Int
+  section_id    Int
+  adm_no        String?   @unique(map: "student_records_adm_no_unique")
+  my_parent_id  Int?
+  dorm_id       Int?
+  dorm_room_no  String?
+  session       String
+  house         String?
+  age           Int?
+  year_admitted String?
+  grad          Int       @default(0)
+  grad_date     String?
+  created_at    DateTime?
+  updated_at    DateTime?
+}
+
+model subjects {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String
+  my_class_id Int
+  teacher_id  Int
+  created_at  DateTime?
+  updated_at  DateTime?
+
+  @@unique([my_class_id, name], map: "subjects_my_class_id_name_unique")
+}
+
+model time_slots {
+  id             Int       @id @default(autoincrement())
+  ttr_id         Int
+  hour_from      Int
+  min_from       String
+  meridian_from  String
+  hour_to        Int
+  min_to         String
+  meridian_to    String
+  time_from      String
+  time_to        String
+  timestamp_from String
+  timestamp_to   String
+  full           String
+  created_at     DateTime?
+  updated_at     DateTime?
+
+  @@unique([timestamp_from, timestamp_to, ttr_id], map: "time_slots_timestamp_from_timestamp_to_ttr_id_unique")
+}
+
+model time_table_records {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "time_table_records_name_unique")
+  my_class_id Int
+  exam_id     Int?
+  year        String
+  created_at  DateTime?
+  updated_at  DateTime?
+
+  @@unique([my_class_id, exam_id, year], map: "time_table_records_my_class_id_exam_id_year_unique")
+}
+
+model time_tables {
+  id             Int       @id @default(autoincrement())
+  ttr_id         Int
+  ts_id          Int
+  subject_id     Int?
+  exam_date      String?
+  timestamp_from String
+  timestamp_to   String
+  day            String?
+  day_num        Int?
+  created_at     DateTime?
+  updated_at     DateTime?
+
+  @@unique([ttr_id, ts_id, exam_date], map: "time_tables_ttr_id_ts_id_exam_date_unique")
+  @@unique([ttr_id, ts_id, day], map: "time_tables_ttr_id_ts_id_day_unique")
+}
+
+model user_types {
+  id         Int       @id @default(autoincrement())
+  title      String
+  name       String
+  level      String
+  created_at DateTime?
+  updated_at DateTime?
+}
+
+model users {
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String?   @unique(map: "users_email_unique")
+  code              String    @unique(map: "users_code_unique")
+  username          String?   @unique(map: "users_username_unique")
+  user_type         String
+  dob               String?
+  gender            String?
+  photo             String    @default("http://localhost/global_assets/images/user.png")
+  phone             String?
+  phone2            String?
+  bg_id             Int?
+  state_id          Int?
+  lga_id            Int?
+  nal_id            Int?
+  address           String?
+  email_verified_at DateTime?
+  password          String
+  remember_token    String?
+  created_at        DateTime?
+  updated_at        DateTime?
+}

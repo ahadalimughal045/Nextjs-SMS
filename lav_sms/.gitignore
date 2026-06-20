@@ -1,0 +1,60 @@
+# ================================================
+# Laravel .gitignore — lav_sms
+# ================================================
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Environment & Secrets
+.env
+.env.backup
+.env.production
+*.env
+
+# Storage (generated at runtime)
+/storage/*.key
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/app/public/
+
+# Public symlinks & hot reload
+/public/hot
+/public/storage
+
+# Database
+/database/database.sqlite
+/database/*.sqlite
+
+# Cache & compiled files
+bootstrap/cache/*.php
+.phpunit.result.cache
+
+# IDE & Editor
+/.idea
+/.vscode
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
+.editorconfig
+
+# Homestead
+Homestead.json
+Homestead.yaml
+
+# NPM / Yarn
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Mix / Vite build output
+/public/css/app.css
+/public/js/app.js
+/mix-manifest.json
+/public/build/
+
+# OS files
+.DS_Store
+Thumbs.db
