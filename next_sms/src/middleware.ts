@@ -9,9 +9,9 @@ const JWT_SECRET = new TextEncoder().encode(
 // Define allowed role routes
 const ROLE_ROUTES = {
   super_admin: ["/super_admin", "/dashboard", "/my_account", "/api"],
-  admin: ["/admin", "/dashboard", "/my_account", "/api", "/students", "/classes", "/sections", "/subjects", "/exams", "/grades", "/dorms", "/payments", "/pins", "/timetables", "/marks"],
-  teacher: ["/dashboard", "/my_account", "/api", "/students/list", "/classes", "/sections", "/subjects", "/marks", "/timetables"],
-  student: ["/dashboard", "/my_account", "/marks", "/timetables", "/payments"],
+  admin: ["/admin", "/dashboard", "/my_account", "/api", "/students", "/classes", "/sections", "/subjects", "/exams", "/grades", "/dorms", "/books", "/payments", "/pins", "/timetables", "/marks", "/settings", "/users"],
+  teacher: ["/dashboard", "/my_account", "/api", "/students", "/classes", "/sections", "/subjects", "/marks", "/timetables", "/books"],
+  student: ["/dashboard", "/my_account", "/marks", "/timetables", "/payments", "/books"],
   parent: ["/dashboard", "/my_account", "/my_children", "/marks", "/payments"],
   accountant: ["/dashboard", "/my_account", "/api", "/payments"],
   librarian: ["/dashboard", "/my_account", "/api", "/books"],
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
   // 1. Unauthenticated users visiting protected pages
   if (!token) {
-    if (pathname !== "/login") {
+    if (pathname !== "/login" && pathname !== "/") {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     return NextResponse.next();

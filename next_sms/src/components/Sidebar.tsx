@@ -21,6 +21,8 @@ import {
   School,
   BookMarked,
   Layers,
+  Bed,
+  Library,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -96,6 +98,18 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
     href: "/payments",
     icon: CreditCard,
     roles: ["super_admin", "admin", "accountant", "student", "parent"],
+  },
+  {
+    name: "Dormitories",
+    href: "/dorms",
+    icon: Bed,
+    roles: ["super_admin", "admin"],
+  },
+  {
+    name: "Library Books",
+    href: "/books",
+    icon: Library,
+    roles: ["super_admin", "admin", "librarian", "teacher", "student"],
   },
   {
     name: "Scratch Cards / Pins",

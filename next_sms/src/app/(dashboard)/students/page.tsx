@@ -1,111 +1,73 @@
 import React from "react";
+import { cookies } from "next/headers";
+import { verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { GraduationCap, Award, Calendar, Layers, ShieldCheck } from "lucide-react";
+import StudentManager from "./StudentManager";
 
 export default async function StudentsPage() {
-  // Query tables
-  const studentRecords = await prisma.student_records.findMany();
-  const users = await prisma.users.findMany({ where: { user_type: "student" } });
-  const classes = await prisma.my_classes.findMany();
-  const sections = await prisma.sections.findMany();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session_token")?.value;
+  let userRole = "student";
 
-  // Join in memory
+  if (token) {
+    const payload = await verifyJWT(token);
+    if (payload && payload.user_type) {
+      userRole = payload.user_type as string;
+    }
+  }
+
+  // Query records and relational lookups
+  const studentRecords = await prisma.student_records.findMany({
+    orderBy: { id: "desc" },
+  });
+  const users = await prisma.users.findMany({ where: { user_type: "student" } });
+  const parents = await prisma.users.findMany({
+    where: { user_type: "parent" },
+    select: { id: true, name: true, phone: true, email: true },
+  });
+  const classes = await prisma.my_classes.findMany({ orderBy: { id: "asc" } });
+  const sections = await prisma.sections.findMany({ orderBy: { id: "asc" } });
+  const dorms = await prisma.dorms.findMany({ orderBy: { id: "asc" } });
+  const bloodGroups = await prisma.blood_groups.findMany({ orderBy: { id: "asc" } });
+
+  // Get current session setting
+  const sessionSetting = await prisma.settings.findFirst({
+    where: { type: "current_session" },
+  });
+  const currentSession = sessionSetting?.description || "2026-2027";
+
+  // Combine student details in memory
   const studentsList = studentRecords
     .map((rec) => {
       const user = users.find((u) => u.id === rec.user_id);
       const myClass = classes.find((c) => c.id === rec.my_class_id);
       const section = sections.find((s) => s.id === rec.section_id);
+      const parent = parents.find((p) => p.id === rec.my_parent_id);
+      const dorm = dorms.find((d) => d.id === rec.dorm_id);
+      const bloodGroup = bloodGroups.find((bg) => bg.id === user?.bg_id);
+
       return {
         ...rec,
         user,
         myClass,
         section,
+        parent,
+        dorm,
+        bloodGroup,
       };
     })
     .filter((item) => item.user !== undefined);
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-black">Students Directory</h2>
-          <p className="text-xs text-slate-600">
-            View admission numbers, assigned classes, sessions, and graduation status.
-          </p>
-        </div>
-        <div>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-blue-50 text-blue-650 border border-blue-100">
-            Total Students: {studentsList.length}
-          </span>
-        </div>
-      </div>
-
-      {/* Table Card */}
-      <div className="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm shadow-blue-550/5">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm border-collapse">
-            <thead>
-              <tr className="border-b border-blue-50 text-slate-500 font-medium text-xs bg-blue-50/10">
-                <th className="py-3 px-6">Student Name</th>
-                <th className="py-3 px-6">Admission No</th>
-                <th className="py-3 px-6">Class & Section</th>
-                <th className="py-3 px-6">Active Session</th>
-                <th className="py-3 px-6">Graduation Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-blue-50 text-slate-800">
-              {studentsList.map((st) => (
-                <tr key={st.id} className="hover:bg-blue-50/20 transition-colors">
-                  <td className="py-4 px-6 font-semibold text-black">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center font-bold text-blue-600 text-xs">
-                        {st.user?.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <span>{st.user?.name}</span>
-                        <span className="block text-[10px] text-slate-450 font-normal mt-0.5">
-                          Age: {st.age || "—"} • Year Admitted: {st.year_admitted || "—"}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 font-mono text-xs text-blue-650 font-semibold">
-                    {st.adm_no || "—"}
-                  </td>
-                  <td className="py-4 px-6 text-xs text-slate-700">
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <span className="px-2 py-0.5 bg-blue-50 text-blue-800 rounded">
-                        {st.myClass?.name || "No Class"}
-                      </span>
-                      {st.section && (
-                        <span className="text-slate-400">
-                          (Sec: {st.section.name})
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-xs text-slate-650">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} className="text-slate-450" />
-                      {st.session}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-xs">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full font-medium ${
-                      st.grad === 1
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-blue-50 text-blue-850"
-                    }`}>
-                      {st.grad === 1 ? "Graduated" : "Active Student"}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <StudentManager
+      initialStudents={studentsList}
+      classes={classes}
+      sections={sections}
+      dorms={dorms}
+      parents={parents}
+      bloodGroups={bloodGroups}
+      currentSession={currentSession}
+      userRole={userRole}
+    />
   );
 }
